@@ -19,7 +19,7 @@ Dieser Report ist so geschrieben, dass **jede:r im Team** die Aufgabe **selbstst
 
 ## 2) Vorgehen (Schritt-für-Schritt)
 
-### a) Daten laden & Features definieren
+### a) Daten laden & Features definieren (Python-Statements)
 ```python
 import pandas as pd
 from sklearn.model_selection import train_test_split
@@ -33,19 +33,18 @@ X = df[[
 y = df["disease_risk"]
 ```
 
+Wichtige Schritte und was sie tun:
+ 
+
 ### b) Modelle
 Wir vergleichen **6 Modelle**:
-- Logistic Regression
-- Naive Bayes
-- Support Vector Machine (SVM)
-- KNN (k-Nearest Neighbours)
-- Decision Tree
-- Random Forest
 
 ### c) Splits & Messung
 Für jedes Modell messen wir die **Accuracy** bei **Testanteilen 10 %, 30 %, 50 %, 70 %, 90 %**.  
 Beim **KNN** wird zusätzlich **k ∈ {1,3,5,7,9,11,13,15,17,19,21}** ausprobiert und je Split das **beste k** gewählt.
 
+### d) Ergebnisse & Darstellung (Python-Statements)
+- train_test_split(X, y, test_size=t, stratify=y, random_state=42): stratifizierter Split für faire Klassenverteilung.
 ---
 
 ## 3) Ergebnisse (exakt aus euren CSVs)
@@ -80,23 +79,34 @@ Beim **KNN** wird zusätzlich **k ∈ {1,3,5,7,9,11,13,15,17,19,21}** ausprobier
 | 90 % | 21 | 0.749 |
 
 > Ergänzende Detaildateien:  
-> - `lr_accuracy_by_split.csv`, `nb_accuracy_by_split.csv`, `svm_accuracy_by_split.csv`, `dt_accuracy_by_split.csv`, `rf_accuracy_by_split.csv`, `knn_accuracy_by_split.csv`  
-> - `knn_accuracy_grid_over_k_and_splits.csv` (komplette k×Split-Matrix)
+>
+> - `lr_accuracy_by_split.csv` (Logistic Regression – Accuracy je Testanteil)  
+> - `knn_accuracy_grid_over_k_and_splits.csv` (komplette k×Split-Matrix)  
+> - `knn_bestk_per_split.csv` (bestes k je Testanteil)
+>
 
 ---
 
 ## 4) Visualisierung
-**Accuracy vs. Testanteil** (alle Modelle in einem Plot):  
-![Accuracy über verschiedene Testanteile](accuracy_over_splits.png)
+
+
+### 4.1 Warum gibt es zwei sehr ähnliche Diagramme je Modell?
+
+In den Notebooks gibt es pro Modell bewusst zwei Plot‑Varianten:
+
+- 10/30/50/70/90 % – Tabelle + Plot: schnelle Live‑Ausgabe direkt nach der Messung, inkl. print()/display der Roh‑Tabelle. Praktisch für Exploration und unmittelbares Feedback.
+- Übersichtstabelle & Plot (Accuracy je Testanteil): standardisierte Darstellung mit konsistenten Achsen/Labels/xticks und oft zusätzlichem CSV‑Export. Dient der Vergleichbarkeit über alle Modelle und der Abgabe.
+
+Kurz: Der erste Plot ist der schnelle Check, der zweite ist die „saubere“ Version für Bericht/Export. Inhalte sind ähnlich, aber die Formatierung ist vereinheitlicht und die Daten werden zusätzlich gespeichert.
 
 ---
 
 ## 5) Interpretation
-- **Random Forest** ist insgesamt am stärksten (höchste Accuracy über die meisten Splits) und robust.
-- **Decision Tree** performt gut, lässt aber stärker nach, je weniger Trainingsdaten vorhanden sind (Anzeichen von Overfitting).
-- **SVM** und **Logistic Regression** sind stabil und liefern konstante, gute Ergebnisse.
-- **Naive Bayes** ist am empfindlichsten gegenüber Verteilungen und Korrelationen der Features.
-- **KNN**: Das **optimale k** verschiebt sich leicht mit dem Testanteil – im Bereich **k ≈ 7–13** liegen oft die besten Werte.
+
+- Spitze: In unseren Ergebnissen liegen Logistische Regression, SVM und Naive Bayes praktisch gleichauf und bilden die besten Accuracies über die Splits.
+- Random Forest liegt knapp dahinter, bleibt aber robust über unterschiedliche Testanteile.
+- Decision Tree fällt deutlich ab und ist variabler (höhere Varianz/Overfitting‑Tendenz bei weniger Trainingsdaten).
+- KNN liegt unterhalb der Top‑Modelle; die Performance hängt spürbar von k ab. Mittlere k liefern meist den besten Kompromiss; sehr kleine k neigen zu hoher Varianz.
 
 ---
 
@@ -152,9 +162,35 @@ for t in test_sizes:
 pd.DataFrame(rows).to_csv("model_accuracy_over_splits_knn_bestk.csv", index=False)
 ```
 
+
+## 6.1) CSV‑Exporte – Inhalt und Zweck
+
+Nur die Dateien, die direkt im Ordner `OutputCSV` liegen (ohne Archiv):
+
+- model_accuracy_over_splits_knn_bestk.csv
+    - Zweck: Gesamter Vergleich aller Modelle über die fünf Testanteile; KNN ist pro Split bereits mit dem jeweils besten k enthalten.
+    - Spalten (Header): Modell, Testanteil, Trainanteil, Accuracy
+
+- knn_accuracy_grid_over_k_and_splits.csv
+    - Zweck: Langformat‑Matrix über alle Kombinationen (Testanteil × k) für KNN; Basis für Pivot/Heatmap und Linienplot Accuracy vs. k.
+    - Spalten (Header): Testanteil, k, Accuracy
+
+- knn_bestk_per_split.csv
+    - Zweck: Kurzüberblick über das beste k je Testanteil inklusive zugehöriger Accuracy.
+    - Spalten (Header): Testanteil, Bestes k, Accuracy
+
+- lr_accuracy_by_split.csv
+    - Zweck: Logistic‑Regression – Accuracy über die fünf Testanteile (einzelnes Modell).
+    - Spalten (Header): Testanteil, Trainanteil, Accuracy
+
+Hinweis: Weitere, gleichartige Dateien pro Modell (z. B. für NB/SVM/DT/RF) wurden in den Archiv‑Unterordner verschoben, um die Abgabe übersichtlich zu halten. Bei Bedarf können sie jederzeit wiederhergestellt werden.
+
 ---
 
+
+
 ## 7) Checkliste für die Abgabe
+
 - [x] Notebook enthält **Daten laden**, **Aufbereitung**, **Training**, **Evaluation**  
 - [x] **Splits**: 10/30/50/70/90 % pro Modell getestet  
 - [x] **KNN** mit mehreren k-Werten, bestes k je Split dokumentiert  
@@ -163,9 +199,15 @@ pd.DataFrame(rows).to_csv("model_accuracy_over_splits_knn_bestk.csv", index=Fals
 - [x] **Kurzfazit** mit Modellwahl begründet
 
 ---
-
+ 
 ## 8) Anhänge
+
 - `model_comparison_summary.xlsx` – Alle Tabellen in einem Workbook
 - `accuracy_over_splits.png` – Vergleichschart
 - `Health_Lifestyle_Report.md` – Kurzversion (vorherige Fassung)
-- **Diese Datei** – *Optimized_Report.md* (aktuelle, ausführliche Fassung)
+ 
+
+````
+
+
+
