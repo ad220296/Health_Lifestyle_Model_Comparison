@@ -189,25 +189,5 @@ Hinweis: Weitere, gleichartige Dateien pro Modell (z. B. für NB/SVM/DT/RF) wurd
 
 
 
-## 7) Checkliste für die Abgabe
-
-- [x] Notebook enthält **Daten laden**, **Aufbereitung**, **Training**, **Evaluation**  
-- [x] **Splits**: 10/30/50/70/90 % pro Modell getestet  
-- [x] **KNN** mit mehreren k-Werten, bestes k je Split dokumentiert  
-- [x] **CSV-Exporte** erstellt (Accuracy-Tabellen)  
-- [x] **Vergleichsgrafik** erzeugt und eingebettet  
-- [x] **Kurzfazit** mit Modellwahl begründet
-
----
- 
-## 8) Anhänge
-
-- `model_comparison_summary.xlsx` – Alle Tabellen in einem Workbook
-- `accuracy_over_splits.png` – Vergleichschart
-- `Health_Lifestyle_Report.md` – Kurzversion (vorherige Fassung)
- 
-
-````
-
 
 
